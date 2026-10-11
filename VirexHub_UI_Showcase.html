@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virex Hub UI Showcase</title>
+<style>
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;background:#111;font-family:Arial,Helvetica,sans-serif;overflow:hidden}
+.stage{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:12px}
+.main-frame{position:relative;width:80vw;height:80vh;background:rgb(30,30,30);border-radius:5%;overflow:hidden;color:white}
+.title{position:absolute;left:0;top:0;width:100%;height:10%;display:flex;align-items:center;justify-content:center;background:transparent;color:white;font-size:clamp(16px,2.2vw,28px);font-weight:400;cursor:grab;user-select:none}
+.loading-frame{position:absolute;left:25%;top:20%;width:50%;height:5%;background:rgb(255,0,0);animation:loading-pulse 2s linear infinite alternate}
+@keyframes loading-pulse{from{width:50%}to{width:80%}}
+.close-button{position:absolute;left:80%;top:0;width:20%;height:10%;border:0;border-radius:0;background:rgb(200,0,0);color:white;font-size:clamp(12px,1.5vw,18px);cursor:pointer}
+.close-button:active{filter:brightness(.88)}
+.main-frame.dragging{cursor:grabbing}
+@media(max-width:600px){.main-frame{width:80vw;height:80vh}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="main-frame" id="mainFrame">
+    <div class="title" id="titleLabel">Virex Hub</div>
+    <div class="loading-frame" aria-label="Loading animation"></div>
+    <button class="close-button" id="closeButton" type="button">Close</button>
+  </div>
+</div>
+<script>
+const frame=document.getElementById('mainFrame');
+const title=document.getElementById('titleLabel');
+document.getElementById('closeButton').addEventListener('click',()=>frame.remove());
+let dragging=false,startX=0,startY=0,frameX=0,frameY=0;
+title.addEventListener('pointerdown',e=>{
+  dragging=true;title.setPointerCapture(e.pointerId);
+  const r=frame.getBoundingClientRect();frameX=r.left;frameY=r.top;startX=e.clientX;startY=e.clientY;
+  frame.classList.add('dragging');
+});
+title.addEventListener('pointermove',e=>{
+  if(!dragging)return;
+  frame.style.position='fixed';frame.style.left=(frameX+e.clientX-startX)+'px';frame.style.top=(frameY+e.clientY-startY)+'px';
+  frame.style.width='80vw';frame.style.height='80vh';frame.style.transform='none';
+});
+function stopDrag(){dragging=false;frame.classList.remove('dragging')}
+title.addEventListener('pointerup',stopDrag);title.addEventListener('pointercancel',stopDrag);
+</script>
+</body>
+</html>
